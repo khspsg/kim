@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.naver.dgkim1007.service.DistributionDao">
+	<resultMap type="com.naver.dgkim1007.entities.Balance" id="BalanceMap">
+	</resultMap>
+	
+	 
+	<select id="balanceListYYYY"  parameterType="String" resultMap="BalanceMap">
+		select 
+		yyyy,vendcode,vendname,preyybalance,
+		(deal01+deal02+deal03+deal04+deal05+deal06+
+		deal07+deal08+deal09+deal10+deal11+deal12)
+		as dealtot,
+		(cash01+cash02+cash03+cash04+cash05+cash06+
+		cash07+cash08+cash09+cash10+cash11+cash12) cashtot,
+		(check01+check02+check03+check04+check05+check06+
+		check07+check08+check09+check10+check11+check12) caecktot,
+		(card01+card02+card03+card04+card05+card06+
+		card07+card08+card09+card10+card11+card12) cardtot,
+		(etc01+etc02+etc03+etc04+etc05+etc06+
+		etc07+etc08+etc09+etc10+etc11+etc12) etctot,
+		balance
+		from balance
+	</select>
+	
+	<select id="balanceSelectOne" parameterType="HashMap" resultMap="BalanceMap">
+		select *, (deal01+deal02+deal03+deal04+deal05+deal06+
+		deal07+deal08+deal09+deal10+deal11+deal12)
+		as dealtot,
+		(cash01+cash02+cash03+cash04+cash05+cash06+
+		cash07+cash08+cash09+cash10+cash11+cash12) cashtot,
+		(check01+check02+check03+check04+check05+check06+
+		check07+check08+check09+check10+check11+check12) caecktot,
+		(card01+card02+card03+card04+card05+card06+
+		card07+card08+card09+card10+card11+card12) cardtot,
+		(etc01+etc02+etc03+etc04+etc05+etc06+
+		etc07+etc08+etc09+etc10+etc11+etc12) etctot
+		from Balance 
+		where yyyy=#{yyyy} and vendcode = #{vendcode}
+	</select>
+	<update id="balanceUpdate" parameterType="hashMap">
+		update balance set 
+		preyybalance=#{preyybalance},prebalance01=#{prebalance01},
+		prebalance02=#{prebalance02},prebalance03=#{prebalance04},
+		prebalance04=#{prebalance04},prebalance05=#{prebalance05},
+		prebalance06=#{prebalance06},prebalance07=#{prebalance07},
+		prebalance08=#{prebalance08},prebalance09=#{prebalance09},
+		prebalance10=#{prebalance10},prebalance11=#{prebalance11},
+		prebalance12=#{prebalance12},deal01=#{deal01},deal02=#{deal02},
+		deal03=#{deal03},deal04=#{deal04},deal05=#{deal05},deal06=#{deal06},
+		deal07=#{deal07},deal08=#{deal08},deal09=#{deal09},deal10=#{deal10},
+		deal11=#{deal11},deal12=#{deal12},
+		cash01=#{cash01},cash02=#{cash02},cash03=#{cash03},cash04=#{cash04},
+		cash05=#{cash05},cash06=#{cash06},cash07=#{cash07},cash08=#{cash08},
+		cash09=#{cash09},cash10=#{cash10},cash11=#{cash11},cash12=#{cash12},
+		check01=#{check01},check02=#{check02},check03=#{check03},check04=#{check04},
+		check05=#{check05},check06=#{check06},check07=#{check07},check08=#{check08},
+		check09=#{check09},check10=#{check10},check11=#{check11},check12=#{check12},
+		card01=#{card01},card02=#{card02},card03=#{card03},card04=#{card04},
+		card05=#{card05},card06=#{card06},card07=#{card07},card08=#{card08},
+		card09=#{card09},card10=#{card10},card11=#{card11},card12=#{card12},
+		etc01=#{etc01},etc02=#{etc02},etc03=#{etc03},etc04=#{etc04},
+		etc05=#{etc05},etc06=#{etc06},etc07=#{etc07},etc08=#{etc08},
+		etc09=#{etc09},etc10=#{etc10},etc11=#{etc11},etc12=#{etc12},
+		balance01=#{balance01},balance02=#{balance02},
+		balance03=#{balance03},balance04=#{balance04},balance05=#{balance05},
+		balance06=#{balance06},balance07=#{balance07},balance08=#{balance08},
+		balance09=#{balance09},balance10=#{balance10},balance11=#{balance11},
+		balance12=#{balance12},balance=#{balance}
+		where yyyy=#{yyyy} and vendcode=${vendcode}
+	</update>
+	 
+	<delete id="deleteRow"  parameterType="String">
+		delete from Balance where code=#{code}
+	</delete>
+	<insert id="buyBalanceAdd" parameterType="HashMap">
+		insert into balance(
+		yyyy,vendcode,vendname,${dealcolumn},${balancecolumn},balance
+		)values(
+		#{yyyy,jdbcType=VARCHAR},#{vendcode,jdbcType=VARCHAR},
+		#{vendname,jdbcType=VARCHAR},
+		#{price} * #{qty},#{price} * #{qty},#{price} * #{qty}
+		) ON DUPLICATE KEY UPDATE
+		${dealcolumn} = ${dealcolumn} + #{price} * #{qty},
+		${balancecolumn} = ${balancecolumn} + #{price} * #{qty},
+		balance = balance + #{price} * #{qty}
+	</insert>
+	<update id="buyBalanceSub"  parameterType="HashMap">
+		update balance set
+		${dealcolumn} = ${dealcolumn} - (#{beforeprice} * #{beforeqty}),
+		${balancecolumn} = ${balancecolumn} - (#{beforeprice} * #{beforeqty}),
+		balance = balance -  (#{beforeprice} * #{beforeqty})
+		where yyyy=#{yyyy} and vendcode=#{vendcode}
+	</update>
+	<update id="paymentBalanceAdd" parameterType="HashMap">
+		update balance set
+		${paywaycolumn} = ${paywaycolumn} + #{amount},
+		${balancecolumn} = ${balancecolumn} - #{amount},
+		balance = balance - #{amount}
+		where yyyy=#{yyyy} and vendcode = #{vendcode}
+	</update>
+	<update id="paymentBalanceSub" parameterType="HashMap">
+		update balance set
+		${beforepaywaycolumn} = ${beforepaywaycolumn} - #{beforeamount},
+		${balancecolumn} = ${balancecolumn} + #{beforeamount},
+		balance = balance + #{beforeamount}
+		where yyyy=#{yyyy} and vendcode = #{vendcode}
+	</update>
+	
+</mapper>

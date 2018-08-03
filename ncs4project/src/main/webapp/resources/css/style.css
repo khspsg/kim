@@ -1,0 +1,22 @@
+body {
+	font-size: 25;
+	margin:0;
+  	padding:0;
+  	background:url("../images/itschool_bg.jpg")
+  	 no-repeat center center fixed;
+  	-webkit-background-size: cover;
+  	-moz-background-size: cover;
+  	-o-background-size: cover;
+  	background-size: cover;
+}
+.id{
+	font-size: 30;
+	color:#ff0000;
+}
+a { text-decoration:none;
+     
+  }
+a:link{ color:blue}
+a:visited{ color:green}
+a:hover{color:black}
+a:active{color:red}
